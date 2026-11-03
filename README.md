@@ -1,18 +1,9 @@
-# SHIFT / TRAIN
+# SHIFT / TRAIN v2
 
-Statisk, mobilanpassad träningsplanerare för GitHub Pages. Ingen inloggning, databas eller sparad träningshistorik.
+Statisk träningsapp för GitHub Pages. Öppnar aktuell vecka automatiskt. Åttaveckors progression från vecka 45, 2026; deload vecka 4 och kontrollvecka 8. Ingen inloggning eller datalagring.
 
-## Publicera på GitHub Pages
-1. Skapa ett nytt repository, exempelvis `shift-train`.
-2. Ladda upp `index.html` och `manifest.webmanifest` till repositoryts rot.
-3. Under **Settings → Pages** välj **Deploy from a branch**, `main`, `/ (root)` och spara.
-4. Öppna GitHub Pages-adressen på iPhone i Safari och välj **Dela → Lägg till på hemskärmen**.
+## Uppdatera GitHub
+Ersätt `index.html` i repositoryt `shift-train` med denna version. Behåll `manifest.webmanifest`. GitHub Pages använder `main` och `/ (root)`.
 
-## Programlogik
-- Vecka 45 2026 är A, följt av B, C, D fram till årsskiftet.
-- Från 2027 används en femveckorscykel med dagtidsvecka 5, 10, 15, 20 osv. Kontrollera den exakta övergången mot faktiskt schema.
-- Arbetspass ger 60 min gym, övriga träningsdagar 30 min. Söndag vila.
-- På lediga dagar och efter nattpass visas Dex-promenad före gym.
-- Apple Watch-zoner: Z1 <123, Z2 124–135, Z3 136–148, Z4 149–160, Z5 161+ bpm.
-
-Obs: Detta är en första version med en liten passbank. Styrkeprocent är planeringsmål, inte individualiserad adaptiv progression.
+## Viktigt
+Arbetsschemat för 2027 är preliminärt modellerat. Apple Watch-zonerna är baserade på användarens skärmbild och kan ändras automatiskt. Gym med hund i bilen endast när det är säkert och tillsyn kan säkerställas.
