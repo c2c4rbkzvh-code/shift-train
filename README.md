@@ -1,7 +1,5 @@
-# SHIFT / TRAIN v3
+# SHIFT / TRAIN v4
 
-48 olika pass över 8 veckor. Ingen databas eller inloggning.
+Uppdaterad 8-veckorscykel med 48 varierade dagsupplägg. 30 minuter med Dex: ren styrka, EMOM eller kort styrka + WOD. 60 minuter på jobbet: uppvärmning, huvudlyft, kompletterande styrka och WOD.
 
-Publicera filerna i repositoryts rot via GitHub Pages, branch main, /(root).
-
-Obs: skiftrotationen 2027 ska verifieras mot faktisk kalender.
+Publicera genom att ersätta `index.html` i repositoryts rot. Ingen datalagring.
