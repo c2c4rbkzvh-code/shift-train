@@ -1,5 +1,7 @@
-# SHIFT / TRAIN v4
+# SHIFT / TRAIN 2.0
 
-Uppdaterad 8-veckorscykel med 48 varierade dagsupplägg. 30 minuter med Dex: ren styrka, EMOM eller kort styrka + WOD. 60 minuter på jobbet: uppvärmning, huvudlyft, kompletterande styrka och WOD.
+GitHub Pages: ersätt index.html i repositoryts rot.
 
-Publicera genom att ersätta `index.html` i repositoryts rot. Ingen datalagring.
+Nyheter: sexveckorsprogression, automatisk passprioritering, manuell tids- och passändring, 1RM, lokal logg och JSON-backup.
+
+Viktigt: Skiftrotationen är preliminär och måste stämmas av mot faktiskt schema. WOD-banken bygger på v4 och 30/45-minutersvarianter skalar tidsfönstret, inte varje repetition automatiskt.
