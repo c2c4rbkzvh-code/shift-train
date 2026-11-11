@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="sv"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="#111827" name="theme-color"/><title>SHIFT / TRAIN 3.0</title><style>
+<html lang="sv"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="#111827" name="theme-color"/><title>SHIFT / TRAIN 3.1</title><style>
 :root{font-family:system-ui,-apple-system,sans-serif;color:#e9eef6;background:#0c111a}*{box-sizing:border-box}body{margin:0}main{max-width:760px;margin:auto;padding:18px 14px 70px}h1{font-size:30px;margin:3px 0}h2{font-size:20px;margin:0 0 12px}h3{margin:12px 0 6px}p{line-height:1.5}.muted{color:#a7b3c6}.small{font-size:13px}.card{background:#172132;border:1px solid #303d50;border-radius:17px;padding:18px;margin:13px 0}.flex{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.btn,select,input,textarea{font:inherit;background:#26354b;color:#fff;border:1px solid #4b5b70;border-radius:9px;padding:10px;max-width:100%}.btn{cursor:pointer}.primary{background:#467a61;border-color:#64a682}.btn:disabled{opacity:.45}.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:14px}.day{padding:8px 1px;font-size:12px;min-width:0}.active{background:#467a61}.day strong{display:block;font-size:16px}.tag{background:#294338;color:#bde6cc;border-radius:20px;padding:5px 10px;font-size:12px}.notice{background:#243047;padding:11px;border-radius:9px;font-size:13px}.field{display:flex;flex-direction:column;gap:5px;margin:9px 0}.field input,.field select{width:100%}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stats div{background:#223047;border-radius:10px;padding:10px}label{font-size:13px;color:#b8c8d9}ul{padding-left:20px;line-height:1.7}button:focus-visible{outline:3px solid #8bd5b0}hr{border:0;border-top:1px solid #344256;margin:16px 0}
 .wod{border-left:3px solid #62b28d;background:#223344;padding:12px 14px;border-radius:8px;margin:12px 0}.wod p{margin:8px 0}.workout h3{font-size:23px}.workout{padding-top:8px}</style></head><body><main>
-<header class="flex"><div><div class="muted small">SKIFTANPASSAD CROSSFIT</div><h1>SHIFT / TRAIN</h1></div><span class="tag">3.0 · 6 veckor</span></header>
+<header class="flex"><div><div class="muted small">SKIFTANPASSAD CROSSFIT</div><h1>SHIFT / TRAIN</h1></div><span class="tag">3.1 · 6 veckor</span></header>
 <section class="card"><div class="flex"><button class="btn" id="prev">←</button><div style="text-align:center"><b id="weekLabel"></b><div class="muted small" id="cycleLabel"></div></div><button class="btn" id="next">→</button></div><div class="days" id="days"></div><div class="stats" style="margin-top:12px"><div><label>Arbetspass</label><div id="shiftLabel"></div></div><div><label>Träningstid</label><div id="timeLabel"></div></div></div></section>
 <section class="card"><div class="flex"><h2>Dagens plan</h2><span class="tag" id="status"></span></div><div id="plan"></div><hr/><div class="grid"><div class="field"><label for="duration">Tillgänglig tid</label><select id="duration"><option value="auto">Automatiskt</option><option value="30">30 minuter</option><option value="45">45 minuter</option><option value="60">60 minuter</option><option value="0">Vila / inget gym</option></select></div><div class="field"><label for="choose">Byt dagens pass</label><select id="choose"></select></div></div><div class="field"><label for="shiftEdit">Ändra arbetspass för valt datum</label><select id="shiftEdit"><option value="">Automatiskt schema (preliminärt)</option><option value="Ledig">Ledig</option><option value="Dag 08–17:30">Dag 08–17:30</option><option value="Natt 17:30–08">Natt 17:30–08</option><option value="Dygn 08–08">Dygn 08–08</option><option value="Efter natt">Efter natt</option><option value="Efter dygn">Efter dygn</option><option value="Dagtid 08–17:30">Dagtid 08–17:30</option></select></div><div class="flex"><button class="btn" id="reset">Återställ dagens val</button><button class="btn primary" id="complete">Logga genomfört pass</button></div><div class="field"><label for="notes">Resultat / tid / varv / anteckning</label><textarea id="notes" placeholder="Ex: 4 varv + 12 reps, squat 100 kg" rows="2"></textarea></div></section>
 <section class="card"><h2>Sexveckorsprogression</h2><div id="progress"></div><div class="grid" id="maxes"></div></section>
@@ -33,12 +33,31 @@ function cycleStart(d){let w=Math.floor((monday(d)-startCycle)/(7*MS));return ne
 const phases=[['Volym och teknik','4 × 6',70,60],['Volymökning','5 × 5',75,65],['Styrka','5 × 4',80,70],['Avlastning','3 × 5',62.5,55],['Intensifiering','5 × 3',85,75],['Kontroll och test','3 × 2 + valfritt toppset',87.5,80]];
 const liftKey=n=>n.toLowerCase().replace(/[^a-z]+/g,'_');
 function availableFor(d){let w=cycleWeek(d),cs=dateKey(cycleStart(d)),logged=new Set(Object.values(state.done).filter(x=>x.week===w&&x.cycleStart===cs).map(x=>x.id));return PROGRAM.filter(x=>x.week===w&&!logged.has(x.id))}
-function candidate(d){let items=availableFor(d);if(!items.length)return null;let prev=state.done[dateKey(new Date(d.getTime()-MS))];items.sort((a,b)=>{let aPenalty=prev?.focus===a.focus?3:0,bPenalty=prev?.focus===b.focus?3:0;return a.order+aPenalty-(b.order+bPenalty)});return items[0]}
+// Datumstyrd veckoplan: framtida dagar får egna pass även innan något loggats.
+// Genomförda pass och manuella val låses först; återstående pass fördelas på fria dagar.
+function weekPlan(d){
+ const mondayDate=monday(d), cw=cycleWeek(d), pool=PROGRAM.filter(p=>p.week===cw).sort((a,b)=>a.order-b.order);
+ const result={}, used=new Set();
+ for(let i=0;i<6;i++){
+   let day=new Date(mondayDate.getTime()+i*MS), key=dateKey(day);
+   let fixed=state.done[key]?.id || state.overrides[key]?.id;
+   let item=pool.find(p=>p.id===fixed);
+   if(item){result[key]=item;used.add(item.id)}
+ }
+ for(let i=0;i<6;i++){
+   let day=new Date(mondayDate.getTime()+i*MS),key=dateKey(day);
+   if(result[key])continue;
+   let item=pool.find(p=>!used.has(p.id));
+   if(item){result[key]=item;used.add(item.id)}
+ }
+ return result;
+}
+function candidate(d){return weekPlan(d)[dateKey(d)]||null}
 function getSelection(d){let key=dateKey(d),o=state.overrides[key]||{},s=scheduleFor(d).shift,minutes=o.duration==='auto'||o.duration==null?(isWork(s)?60:30):Number(o.duration),item=o.id?PROGRAM.find(p=>p.id===o.id):candidate(d);return {key,o,s,minutes,item}}
 function loadFor(item){const ph=phases[item.week-1],olymp=item.kind==='Olympiskt';let percent=olymp?ph[3]:ph[2],sets=olymp?(item.week===4?'6 × 2 lätt teknik':'8 × 2 teknikset'):ph[1];if(item.name==='Deadlift'&&!olymp)sets=['3 × 6','4 × 5','4 × 4','2 × 5','4 × 3','3 × 2'][item.week-1];let max=state.maxes[liftKey(item.name)];return {percent,sets,weight:max?Math.round(max*percent/100/2.5)*2.5:null}}
 function render(){let d=dateAt(selected),key=dateKey(d),wk=weekNum(d),sch=scheduleFor(d),cw=cycleWeek(d),{o,s,minutes,item}=getSelection(d),done=state.done[key];
  document.getElementById('weekLabel').textContent=`Vecka ${wk.week} · ${wk.year}`;document.getElementById('cycleLabel').textContent=sch.cycle+' · programvecka '+cw+'/6';
- document.getElementById('days').innerHTML=NAMES.map((n,i)=>{let x=dateAt(i),k=dateKey(x);return `<button class="btn day ${i===selected?'active':''}" data-day="${i}">${n}<strong>${x.getUTCDate()}</strong>${state.done[k]?'✓':''}</button>`}).join('');document.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{selected=+b.dataset.day;render()});
+ document.getElementById('days').innerHTML=NAMES.map((n,i)=>{let x=dateAt(i),k=dateKey(x);return `<button class="btn day ${i===selected?'active':''}" data-day="${i}">${n}<strong>${x.getUTCDate()}</strong><small style="display:block;font-size:10px;line-height:1.3;margin-top:4px">${i===6?'Vila':safe(weekPlan(x)[k]?.name||'—')}</small>${state.done[k]?'✓':''}</button>`}).join('');document.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{selected=+b.dataset.day;render()});
  document.getElementById('shiftLabel').textContent=s;document.getElementById('timeLabel').textContent=selected===6?'Vilodag':minutes?minutes+' min':'Vila';document.getElementById('duration').value=o.duration??'auto';
  let choices=PROGRAM.filter(p=>p.week===cw);document.getElementById('choose').innerHTML='<option value="">Automatiskt val</option>'+choices.map(p=>`<option value="${p.id}">${safe(p.name)}</option>`).join('');document.getElementById('choose').value=o.id||'';
  document.getElementById('shiftEdit').value=state.shiftOverrides[key]||'';
